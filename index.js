@@ -5,9 +5,9 @@ const resetBtn = document.querySelector("#resetBtn");
 const gameWidth = gameBoard.width;
 const gameHeight = gameBoard.height;
 const boardBackground = "white";
-const snakeColor = "lightgreen";
-const snakeBorder = "black";
-const foodColor = "red";
+const snakeColor = "#74ffdf";
+const snakeBorder = "#80a9f1";
+const foodColor = "#e89017";
 const unitSize = 25;
 let running = false;
 let xVelocity = unitSize;
@@ -21,7 +21,7 @@ let snake = [
     {x:unitSize * 2, y:0},
     {x:unitSize, y:0},
     {x:0, y:0}
-]
+];
 
 window.addEventListener("keydown", changeDirection);
 resetBtn.addEventListener("click", resetGame);
@@ -29,8 +29,8 @@ resetBtn.addEventListener("click", resetGame);
 gameStart();
 
 function gameStart(){
-    running = true;
-    score.Text.textContent = score;
+    running= true;
+    scoreText.textContent = score;
     createFood();
     drawFood();
     nextTick();
@@ -52,11 +52,11 @@ function nextTick(){
 };
 function clearBoard(){
     ctx.fillStyle = boardBackground;
-    ctx.fillRect(0, 0, gameWidth. gameHeight);
+    ctx.fillRect(0, 0, gameWidth, gameHeight);
 };
 function createFood(){
     function randomFood(min, max){
-        const randNum = Math.round((Math.random() * (min - max) + min) / unitSize) * unitSize;
+        const randNum = Math.round((Math.random() * (max - min) + min) / unitSize) * unitSize;
         return randNum;
     }
     foodX = randomFood(0, gameWidth - unitSize);
@@ -79,7 +79,7 @@ function moveSnake(){
     }
     else{
         snake.pop();
-    }
+    }     
 };
 function drawSnake(){
     ctx.fillStyle = snakeColor;
@@ -92,8 +92,8 @@ function drawSnake(){
 function changeDirection(event){
     const keyPressed = event.keyCode;
     const LEFT = 37;
-    const Right = 39;
     const UP = 38;
+    const RIGHT = 39;
     const DOWN = 40;
 
     const goingUp = (yVelocity == -unitSize);
@@ -103,8 +103,61 @@ function changeDirection(event){
 
     switch(true){
         case(keyPressed == LEFT && !goingRight):
+            xVelocity = -unitSize;
+            yVelocity = 0;
+            break;
+        case(keyPressed == UP && !goingDown):
+            xVelocity = 0;
+            yVelocity = -unitSize;
+            break;
+        case(keyPressed == RIGHT && !goingLeft):
+            xVelocity = unitSize;
+            yVelocity = 0;
+            break;
+        case(keyPressed == DOWN && !goingUp):
+            xVelocity = 0;
+            yVelocity = unitSize;
+            break;
     }
 };
-function checkGameOver(){};
-function displayGameOver(){};
-function resetGame(){};
+function checkGameOver(){
+    switch(true){
+        case (snake[0].x < 0):
+            running = false;
+            break;
+        case (snake[0].x >= gameWidth):
+            running = false;
+            break;
+        case (snake[0].y < 0):
+            running = false;
+            break;
+        case (snake[0].y >= gameHeight):
+                running = false;
+                break;
+    }
+    for(let i = 1; i < snake.length; i+=1){
+        if(snake[i].x == snake[0].x && snake[i].y == snake[0].y){
+            running = false;
+        }
+    }
+};
+function displayGameOver(){
+    ctx.font = "50px MV Boli";
+    ctx.fillStyle = "black";
+    ctx.textAlign = "center";
+    ctx.fillText("GAME OVER!", gameWidth / 2, gameHeight / 2);
+    running = false;
+};
+function resetGame(){
+    score = 0;
+    xVelocity = unitSize;
+    yVelocity = 0;
+    snake = [
+        {x:unitSize * 4, y:0},
+        {x:unitSize * 3, y:0},
+        {x:unitSize * 2, y:0},
+        {x:unitSize, y:0},
+        {x:0, y:0}
+    ];
+    gameStart();
+};
